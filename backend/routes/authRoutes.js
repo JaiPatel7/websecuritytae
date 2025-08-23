@@ -7,35 +7,47 @@ const router = express.Router();
 
 // Register
 router.post("/register", async (req, res) => {
-    const { username, password } = req.body;
+    console.log("Request Body:", req.body); 
+    const { username, email, password } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword });
+        const newUser = new User({ username, email, password: hashedPassword });
         await newUser.save();
-        res.json({ message: "User registered successfully" });
-    } catch (err) {
-        res.status(500).json({ error: "User registration failed" });
+        res.status(201).json({ message: "User registered successfully" });
+    }
+    catch (err) {
+        console.error("Registration error:", err)
+        res.status(500).json({
+            error: "User registration failed",
+            details: err.message,
+        });
     }
 });
+
 
 // Login
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ username });
-        if (!user) return res.status(400).json({ error: "Invalid credentials" });
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid credentials" }); // changed to message
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" }); // changed to message
+        }
 
         req.session.userId = user._id;
-        res.json({ message: "Login successful" });
+        res.json({ message: "Login successful", user: { id: user._id, email: user.email } });
     } catch (err) {
-        res.status(500).json({ error: "Login failed" });
+        res.status(500).json({ message: "Login failed" }); // changed to message
     }
 });
+
 
 // Logout
 router.post("/logout", (req, res) => {
@@ -44,5 +56,12 @@ router.post("/logout", (req, res) => {
         res.json({ message: "Logged out successfully" });
     });
 });
+
+router.get("/test", (req, res) => {
+    res.json({ message: "Auth routes working!" });
+});
+
+console.log("✅ authRoutes loaded");
+
 
 module.exports = router;
