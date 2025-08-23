@@ -46,7 +46,7 @@ app.use(
 );
 
 // CSRF Protection (will configure properly later)
-// app.use(csurf());
+//  app.use(csurf());
 
 // Routes
 app.use("/api/auth", authRoutes);
