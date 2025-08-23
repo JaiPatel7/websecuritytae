@@ -1,57 +1,67 @@
-// frontend/src/pages/Login.jsx
-import { useState } from "react";
-import api from "../utils/axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import navigation hook
+import axios from "axios";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate(); // ✅ initialize navigate
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post("/auth/login", { email, password });
-            setMessage("✅ Login successful!");
-            console.log("User:", res.data);
+            const res = await axios.post("http://localhost:5000/api/auth/login", {
+                email,
+                password,
+            }, { withCredentials: true }); // ✅ include credentials
+
+            if (res.data.message === "Login successful") {
+                navigate("/dashboard"); // ✅ redirect after success
+            }
         } catch (err) {
-            setMessage("❌ " + (err.response?.data?.error || "Login failed"));
+            setError(err.response?.data?.error || "Login failed");
         }
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-900">
-            <form
-                onSubmit={handleLogin}
-                className="bg-white p-6 rounded-lg shadow-md w-96"
-            >
-                <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full border p-2 mb-3 rounded"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                {error && (
+                    <p className="text-red-500 text-center mb-4">{error}</p>
+                )}
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    className="w-full border p-2 mb-3 rounded"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                >
-                    Login
-                </button>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                {message && <p className="mt-3 text-center">{message}</p>}
-            </form>
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                    >
+                        Login
+                    </button>
+                </form>
+            </div>
         </div>
+
     );
 };
 

@@ -64,4 +64,32 @@ router.get("/test", (req, res) => {
 console.log("✅ authRoutes loaded");
 
 
+// Get current logged-in user + session info
+router.get("/me", async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+        const user = await User.findById(req.session.userId).select("-password");
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        res.json({
+            user,
+            session: {
+                id: req.sessionID,
+                createdAt: req.session.cookie._expires
+                    ? new Date(Date.now() - (req.session.cookie.originalMaxAge - (req.session.cookie.expires - Date.now())))
+                    : null,
+                expiresAt: req.session.cookie.expires,
+                maxAge: req.session.cookie.maxAge,
+            },
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch user" });
+    }
+});
+
+
+
 module.exports = router;
