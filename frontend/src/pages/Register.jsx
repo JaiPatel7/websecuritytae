@@ -1,4 +1,3 @@
-// frontend/src/pages/Register.jsx
 import { useState } from "react";
 import api from "../utils/axios";
 

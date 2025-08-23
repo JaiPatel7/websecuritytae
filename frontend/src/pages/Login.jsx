@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import navigation hook
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const navigate = useNavigate(); // ✅ initialize navigate
+    const navigate = useNavigate(); 
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -14,15 +14,18 @@ const Login = () => {
             const res = await axios.post("http://localhost:5000/api/auth/login", {
                 email,
                 password,
-            }, { withCredentials: true }); // ✅ include credentials
+            }, { withCredentials: true });
 
             if (res.data.message === "Login successful") {
-                navigate("/dashboard"); // ✅ redirect after success
+               
+                sessionStorage.setItem("expiresAt", res.data.session.expiresAt);
+                navigate("/dashboard");
             }
         } catch (err) {
             setError(err.response?.data?.error || "Login failed");
         }
     };
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">

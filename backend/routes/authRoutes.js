@@ -27,19 +27,17 @@ router.post("/register", async (req, res) => {
 });
 
 
-// Login
 
+// Login
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    // Capture IP and user agent
     const ip = req.ip || req.headers["x-forwarded-for"] || "unknown";
     const userAgent = req.get("User-Agent") || "unknown";
 
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            // Log failed attempt
             await Log.create({ userId: null, email, success: false, ip, userAgent });
             return res.status(400).json({ error: "Invalid credentials" });
         }
@@ -50,13 +48,28 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ error: "Invalid credentials" });
         }
 
-        // Log successful attempt
-        await Log.create({ userId: user._id, email, success: true, ip, userAgent });
+        // Regenerate session
+        req.session.regenerate((err) => {
+            if (err) return res.status(500).json({ error: "Session reset failed" });
 
-        req.session.userId = user._id;
-        res.json({ message: "Login successful" });
+            req.session.userId = user._id;
+
+            // Set cookie maxAge (15 mins)
+            req.session.cookie.maxAge = 15 * 60 * 1000;
+
+           
+            Log.create({ userId: user._id, email, success: true, ip, userAgent });
+
+            // Send exact expiresAt to frontend
+            res.json({
+                message: "Login successful",
+                session: {
+                    id: req.sessionID,
+                    expiresAt: new Date(Date.now() + req.session.cookie.maxAge)
+                }
+            });
+        });
     } catch (err) {
-        console.error("Login error:", err);
         res.status(500).json({ error: "Login failed" });
     }
 });
@@ -101,7 +114,7 @@ router.delete("/logs", async (req, res) => {
 });
 
 
-// Get current logged-in user + session info
+//current logged-in user + session info
 router.get("/me", async (req, res) => {
     if (!req.session.userId) {
         return res.status(401).json({ error: "Not authenticated" });
