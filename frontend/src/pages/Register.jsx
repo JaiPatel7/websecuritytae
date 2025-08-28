@@ -23,46 +23,65 @@ const Register = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-900">
-            <form
-                onSubmit={handleRegister}
-                className="bg-white p-6 rounded-lg shadow-md w-96"
-            >
-                <h2 className="text-2xl font-bold mb-4">Register</h2>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+            <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                    Create an Account
+                </h2>
 
-                <input
-                    type="text"
-                    placeholder="Username"
-                    className="w-full border p-2 mb-3 rounded"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                <form onSubmit={handleRegister} className="space-y-4">
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full border p-2 mb-3 rounded"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    className="w-full border p-2 mb-3 rounded"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
 
-                <button
-                    type="submit"
-                    className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-                >
-                    Register
-                </button>
+                    <button
+                        type="submit"
+                        className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition duration-200"
+                    >
+                        Register
+                    </button>
+                </form>
 
-                {message && <p className="mt-3 text-center">{message}</p>}
-            </form>
+                {message && (
+                    <p
+                        className={`mt-4 text-center font-medium ${
+                            message.includes("✅") ? "text-green-600" : "text-red-500"
+                        }`}
+                    >
+                        {message}
+                    </p>
+                )}
+
+                <p className="mt-6 text-sm text-center text-gray-600">
+                    Already have an account?{" "}
+                    <a href="/login" className="text-green-600 hover:underline">
+                        Login here
+                    </a>
+                </p>
+            </div>
         </div>
     );
 };

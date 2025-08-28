@@ -17,7 +17,6 @@ const Login = () => {
             }, { withCredentials: true });
 
             if (res.data.message === "Login successful") {
-               
                 sessionStorage.setItem("expiresAt", res.data.session.expiresAt);
                 navigate("/dashboard");
             }
@@ -26,45 +25,57 @@ const Login = () => {
         }
     };
 
-
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+            <div className="w-full max-w-md bg-white/20 backdrop-blur-lg shadow-2xl rounded-2xl p-8 border border-white/30">
+                <h2 className="text-3xl font-extrabold text-center text-white mb-6 drop-shadow-lg">
+                    Welcome Back 👋
+                </h2>
 
                 {error && (
-                    <p className="text-red-500 text-center mb-4">{error}</p>
+                    <p className="text-red-400 text-center mb-4 font-medium">{error}</p>
                 )}
 
-                <form onSubmit={handleLogin} className="space-y-4">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                <form onSubmit={handleLogin} className="space-y-5">
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+                        />
+                    </div>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+                        />
+                    </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                        className="w-full py-3 bg-yellow-400 text-gray-900 font-bold rounded-xl hover:bg-yellow-300 transition transform hover:scale-105 shadow-md"
                     >
                         Login
                     </button>
                 </form>
+
+                <p className="text-sm text-gray-200 text-center mt-6">
+                    Don’t have an account?{" "}
+                    <a href="/register" className="text-black hover:underline  hover:text-white">
+                        Sign up
+                        </a>
+                 
+                </p>
             </div>
         </div>
-
     );
 };
 
